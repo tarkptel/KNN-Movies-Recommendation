@@ -4,101 +4,74 @@
 <h1>Movie Recommendation System Using KNN</h1>
 
 <h2>Overview</h2>
-<p>This project implements a <strong>movie recommendation system</strong> using the <strong>K-Nearest Neighbors (KNN)</strong> algorithm. It is built on the <strong>MovieLens dataset</strong> and focuses on recommending movies similar to a given movie based on their genres and average ratings.</p>
+<p>This project is a <strong>movie recommendation system</strong> designed using the <strong>K-Nearest Neighbors (KNN)</strong> algorithm. The goal is to recommend movies similar to a given movie based on their genres and average ratings, using the popular MovieLens dataset.</p>
 
-<h2>Key Features</h2>
+<h2>Features</h2>
 <ul>
-    <li><strong>Dataset Integration:</strong> Merges metadata and ratings for unified analysis.</li>
-    <li><strong>Feature Engineering:</strong> Encodes genres and aggregates ratings.</li>
-    <li><strong>Recommendation Algorithm:</strong> Implements KNN to suggest similar movies.</li>
+    <li><strong>Dataset Merging:</strong> Combines movie metadata and user ratings for unified processing.</li>
+    <li><strong>Genre Encoding:</strong> Encodes multi-genre data for better analysis.</li>
+    <li><strong>Aggregated Ratings:</strong> Uses average movie ratings as a key feature.</li>
+    <li><strong>KNN Implementation:</strong> Leverages cosine similarity to recommend similar movies.</li>
 </ul>
 
-<h2>Steps in the Project</h2>
+<h2>Project Workflow</h2>
+
 <h3>1. Data Loading</h3>
-<p>The project uses the following datasets:</p>
+<p>The project utilizes two datasets:</p>
 <ul>
-    <li><code>movies.csv</code>: Metadata about movies, such as <code>movieId</code>, <code>title</code>, and <code>genres</code>.</li>
-    <li><code>ratings.csv</code>: User ratings, including <code>userId</code>, <code>movieId</code>, <code>rating</code>, and <code>timestamp</code>.</li>
+    <li><strong>Movies Metadata:</strong> Contains details like <em>movieId</em>, <em>title</em>, and <em>genres</em>.</li>
+    <li><strong>User Ratings:</strong> Includes user preferences in the form of <em>ratings</em>.</li>
 </ul>
-<pre>
-movies = pd.read_csv("movies.csv")
-ratings = pd.read_csv("ratings.csv")
-</pre>
 
 <h3>2. Data Merging</h3>
-<p>Merges <code>movies.csv</code> and <code>ratings.csv</code> using the <code>movieId</code> column:</p>
-<pre>
-data = pd.merge(ratings, movies, on='movieId')
-</pre>
+<p>The datasets are merged on the <strong>movieId</strong> column to align movie details with their respective ratings.</p>
 
 <h3>3. Feature Engineering</h3>
-<p>Encodes the <code>genres</code> column using <code>MultiLabelBinarizer</code>:</p>
-<pre>
-mlb = MultiLabelBinarizer()
-genres_encoded = mlb.fit_transform(data['genres'])
-</pre>
-<p>Appends the encoded genres back to the dataset.</p>
+<p>Multi-genre information is encoded using <strong>MultiLabelBinarizer</strong>, creating binary features for each genre. This allows the model to compare movies based on their genres effectively.</p>
 
-<h3>4. Data Aggregation</h3>
-<p>Groups data by <code>movieId</code> and calculates:</p>
+<h3>4. Aggregation</h3>
+<p>For each movie, the following features are calculated:</p>
 <ul>
-    <li>Average ratings for each movie.</li>
-    <li>Presence of each genre as binary features.</li>
+    <li><strong>Average Rating:</strong> Summarizes user feedback.</li>
+    <li><strong>Genre Binary Features:</strong> Indicates the presence of specific genres.</li>
 </ul>
-<pre>
-movie_features = data.groupby('movieId').agg({
-    'rating': 'mean',
-    **{genre: 'max' for genre in mlb.classes_}
-}).reset_index()
-</pre>
 
-<h3>5. KNN Model</h3>
-<p>Uses KNN to find similar movies based on cosine similarity:</p>
-<pre>
-knn = NearestNeighbors(n_neighbors=5, metric='cosine')
-knn.fit(X)
-</pre>
-
-<h3>6. Recommendations</h3>
-<p>Generates recommendations for a given movie:</p>
-<pre>
-distances, indices = knn.kneighbors([X.iloc[movie_index]])
-for i in indices[0]:
-    print(movies[movies['movieId'] == movie_ids.iloc[i]]['title'].values[0])
-</pre>
+<h3>5. Recommendation Model</h3>
+<p>The KNN algorithm is employed to find movies similar to a selected one. Cosine similarity is used as the metric to measure similarity between movies based on their features.</p>
 
 <h2>Technologies Used</h2>
 <ul>
     <li><strong>Python</strong></li>
-    <li><strong>Pandas:</strong> Data manipulation and aggregation.</li>
-    <li><strong>Scikit-learn:</strong> KNN model and MultiLabelBinarizer.</li>
+    <li><strong>Pandas:</strong> Data processing and aggregation.</li>
+    <li><strong>Scikit-learn:</strong> Encoding genres and implementing the KNN model.</li>
 </ul>
 
-<h2>Why These Techniques Were Used?</h2>
+<h2>Why KNN?</h2>
+<p>KNN is a simple yet effective algorithm for finding similar items in a dataset. It works well for this project because:</p>
 <ul>
-    <li><strong>MultiLabelBinarizer:</strong> Handles multi-valued genres effectively.</li>
-    <li><strong>Aggregating Ratings:</strong> Summarizes user preferences efficiently.</li>
-    <li><strong>KNN:</strong> Identifies similar movies with cosine similarity.</li>
+    <li>It is intuitive and interpretable.</li>
+    <li>It does not assume a specific distribution of the data.</li>
+    <li>Cosine similarity helps in comparing multi-dimensional data effectively.</li>
 </ul>
 
-<h2>How to Use</h2>
+<h2>How to Use the System</h2>
 <ol>
-    <li>Clone the repository:
-        <pre>git clone https://github.com/yourusername/movie-recommendation-knn.git</pre>
+    <li>Download and prepare the datasets (<em>movies.csv</em> and <em>ratings.csv</em>).</li>
+    <li>Install required libraries:
+        <ul>
+            <li><strong>Pandas:</strong> For data handling.</li>
+            <li><strong>Scikit-learn:</strong> For the KNN implementation.</li>
+        </ul>
     </li>
-    <li>Install the required libraries:
-        <pre>pip install pandas scikit-learn</pre>
-    </li>
-    <li>Run the script:
-        <pre>python movie_recommendation.py</pre>
-    </li>
+    <li>Run the project script to generate recommendations.</li>
 </ol>
 
-<h2>Possible Improvements</h2>
+<h2>Future Enhancements</h2>
+<p>Potential improvements to the system include:</p>
 <ul>
-    <li>Integrate user-based filtering for personalized recommendations.</li>
-    <li>Use dimensionality reduction (e.g., PCA) to optimize for large datasets.</li>
-    <li>Develop a user interface for better interaction.</li>
+    <li><strong>User-based Filtering:</strong> Recommend movies based on individual user preferences.</li>
+    <li><strong>Dimensionality Reduction:</strong> Use techniques like PCA to handle high-dimensional genre data efficiently.</li>
+    <li><strong>Interactive Interface:</strong> Develop a user-friendly web or desktop application for the recommendation system.</li>
 </ul>
 
 </body>
